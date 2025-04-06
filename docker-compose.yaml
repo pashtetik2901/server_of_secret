@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=database
+      - POSTGRES_USER=pasha
+      - POSTGRES_PASSWORD=2901
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app
+  postgres:
+    image: postgres
+    container_name: postgres_db
+    environment:
+      - POSTGRES_PASSWORD=2901
+      - POSTGRES_USER=pasha
+      - POSTGRES_DB=database
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
